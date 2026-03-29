@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do you love me?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd4e8 100%);
+            font-family: 'Fredoka', sans-serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 40px;
+            position: relative;
+        }
+        
+        .cat-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        
+        .cat {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        /* Cat body */
+        .cat-body {
+            position: absolute;
+            width: 140px;
+            height: 120px;
+            background: white;
+            border-radius: 50% 50% 45% 45%;
+            top: 60px;
+            left: 30px;
+            border: 3px solid #333;
+            box-shadow: inset -10px -10px 0 rgba(0,0,0,0.05);
+        }
+        
+        /* Cat head */
+        .cat-head {
+            position: absolute;
+            width: 120px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            top: 20px;
+            left: 40px;
+            border: 3px solid #333;
+            z-index: 2;
+        }
+        
+        /* Ears */
+        .ear {
+            position: absolute;
+            width: 35px;
+            height: 40px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 50% 50% 0 0;
+            top: -15px;
+        }
+        
+        .ear.left {
+            left: 10px;
+            transform: rotate(-20deg);
+        }
+        
+        .ear.right {
+            right: 10px;
+            transform: rotate(20deg);
+        }
+        
+        .ear-inner {
+            position: absolute;
+            width: 20px;
+            height: 25px;
+            background: #ffb6c1;
+            border-radius: 50% 50% 0 0;
+            top: 8px;
+            left: 5px;
+        }
+        
+        /* Face */
+        .face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .eyes {
+            position: absolute;
+            top: 35px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+        
+        .eye {
+            width: 18px;
+            height: 22px;
+            background: #333;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .eye.happy {
+            height: 10px;
+            border-radius: 0 0 50% 50%;
+            background: transparent;
+            border: 3px solid #333;
+            border-top: none;
+        }
+        
+        .eye.closed {
+            height: 3px;
+            background: #333;
+            border-radius: 0;
+            width: 20px;
+        }
+        
+        .blush {
+            position: absolute;
+            width: 25px;
+            height: 15px;
+            background: #ffb6c1;
+            border-radius: 50%;
+            top: 50px;
+            opacity: 0.6;
+        }
+        
+        .blush.left {
+            left: 15px;
+        }
+        
+        .blush.right {
+            right: 15px;
+        }
+        
+        .mouth {
+            position: absolute;
+            width: 20px;
+            height: 15px;
+            border: 3px solid #333;
+            border-top: none;
+            border-radius: 0 0 50% 50%;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .mouth.open {
+            height: 20px;
+            background: #ff6b9d;
+            border: 2px solid #333;
+        }
+        
+        /* Paws */
+        .paw {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 50%;
+            bottom: -10px;
+            z-index: 3;
+        }
+        
+        .paw.left {
+            left: 40px;
+        }
+        
+        .paw.right {
+            right: 40px;
+        }
+        
+        /* Animation for idle cat */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .cat-idle {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Question marks */
+        .question-marks {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: 30px;
+            color: #666;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .question-marks.show {
+            opacity: 1;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .question-marks span {
+            display: inline-block;
+            animation: bounce 0.6s ease-in-out infinite;
+        }
+        
+        .question-marks span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .question-marks span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        /* Message */
+        .message {
+            font-size: 28px;
+            color: #d64570;
+            font-weight: 600;
+            margin-bottom: 40px;
+            min-height: 40px;
+            transition: all 0.3s ease;
+        }
+        
+        /* Buttons */
+        .buttons {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 80px;
+        }
+        
+        .btn {
+            padding: 15px 50px;
+            font-size: 24px;
+            font-weight: 600;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fredoka', sans-serif;
+            position: relative;
+        }
+        
+        .btn-yes {
+            background: #4ecdc4;
+            color: white;
+            box-shadow: 0 5px 0 #3dbbb3, 0 10px 20px rgba(78, 205, 196, 0.3);
+            z-index: 10;
+        }
+        
+        .btn-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #3dbbb3, 0 15px 30px rgba(78, 205, 196, 0.4);
+        }
+        
+        .btn-yes:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #3dbbb3, 0 5px 10px rgba(78, 205, 196, 0.3);
+        }
+        
+        .btn-no {
+            background: #e74c3c;
+            color: white;
+            box-shadow: 0 5px 0 #c0392b, 0 10px 20px rgba(231, 76, 60, 0.3);
+            z-index: 5;
+        }
+        
+        .btn-no:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #c0392b, 0 15px 30px rgba(231, 76, 60, 0.4);
+        }
+        
+        .btn-no.absolute {
+            position: absolute;
+        }
+        
+        /* Success page */
+        .success-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 50%, #ffd4e8 100%);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 100;
+        }
+        
+        .success-page.show {
+            display: flex;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .success-cat {
+            width: 250px;
+            height: 250px;
+            position: relative;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .success-message {
+            font-size: 32px;
+            color: #d64570;
+            font-weight: 600;
+            margin-top: 30px;
+        }
+        
+        .hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .heart {
+            position: absolute;
+            font-size: 30px;
+            color: #ff6b9d;
+            animation: floatUp 4s ease-in infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Cat holding heart */
+        .cat-holding-heart {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .big-heart {
+            position: absolute;
+            width: 80px;
+            height: 70px;
+            background: #ff6b9d;
+            transform: rotate(-10deg);
+            top: 60px;
+            right: 30px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .big-heart:before,
+        .big-heart:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 70px;
+            background: #ff6b9d;
+            border-radius: 50%;
+        }
+        
+        .big-heart:before {
+            top: -35px;
+            left: 0;
+        }
+        
+        .big-heart:after {
+            top: 0;
+            left: -35px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: rotate(-10deg) scale(1); }
+            50% { transform: rotate(-10deg) scale(1.1); }
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .mini-heart {
+            position: absolute;
+            font-size: 24px;
+            color: #ff6b9d;
+            animation: floatAround 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatAround {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -20px) rotate(10deg); }
+            50% { transform: translate(-5px, -30px) rotate(-5deg); }
+            75% { transform: translate(15px, -10px) rotate(5deg); }
+        }
+        
+        /* Hide original when success shows */
+        .main-content {
+            transition: opacity 0.3s;
+        }
+        
+        .main-content.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Shy cat covering eyes */
+        .cat-shy .eyes {
+            display: none;
+        }
+        
+        .cat-shy .paws-up {
+            position: absolute;
+            width: 35px;
+            height: 50px;
+            background: white;
+            border: 3px solid #333;
+            border-radius: 50%;
+            top: 30px;
+            z-index: 10;
+        }
+        
+        .cat-shy .paws-up.left {
+            left: 25px;
+            transform: rotate(-20deg);
+        }
+        
+        .cat-shy .paws-up.right {
+            right: 25px;
+            transform: rotate(20deg);
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating hearts background -->
+    <div class="hearts" id="heartsBg"></div>
+    
+    <!-- Main content -->
+    <div class="main-content" id="mainContent">
+        <div class="container">
+            <!-- Cat character -->
+            <div class="cat-container">
+                <div class="question-marks" id="questionMarks">
+                    <span>?</span><span>?</span><span>?</span>
+                </div>
+                <div class="cat cat-idle" id="cat">
+                    <div class="cat-head" id="catHead">
+                        <div class="ear left"><div class="ear-inner"></div></div>
+                        <div class="ear right"><div class="ear-inner"></div></div>
+                        <div class="face" id="face">
+                            <div class="eyes" id="eyes">
+                                <div class="eye" id="eyeLeft"></div>
+                                <div class="eye" id="eyeRight"></div>
+                            </div>
+                            <div class="blush left"></div>
+                            <div class="blush right"></div>
+                            <div class="mouth" id="mouth"></div>
+                        </div>
+                    </div>
+                    <div class="cat-body"></div>
+                    <div class="paw left"></div>
+                    <div class="paw right"></div>
+                    <!-- Shy paws (hidden by default) -->
+                    <div class="paws-up left hidden" id="pawLeft"></div>
+                    <div class="paws-up right hidden" id="pawRight"></div>
+                </div>
+            </div>
+            
+            <!-- Message -->
+            <div class="message" id="message">Do you love me? ❤️</div>
+            
+            <!-- Buttons -->
+            <div class="buttons" id="buttonContainer">
+                <button class="btn btn-yes" id="yesBtn">YES</button>
+                <button class="btn btn-no" id="noBtn">NO</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success page -->
+    <div class="success-page" id="successPage">
+        <div class="success-cat">
+            <div class="cat-holding-heart">
+                <div class="cat-head" style="width: 150px; height: 130px; top: 30px; left: 50px;">
+                    <div class="ear left" style="width: 45px; height: 50px; top: -20px; left: 15px;"><div class="ear-inner" style="width: 25px; height: 30px;"></div></div>
+                    <div class="ear right" style="width: 45px; height: 50px; top: -20px; right: 15px;"><div class="ear-inner" style="width: 25px; height: 30px;"></div></div>
+                    <div class="face" style="top: 10px;">
+                        <div class="eyes" style="top: 50px; gap: 35px;">
+                            <div class="eye happy" style="width: 25px; height: 15px;"></div>
+                            <div class="eye happy" style="width: 25px; height: 15px;"></div>
+                        </div>
+                        <div class="blush left" style="width: 35px; height: 20px; top: 70px; left: 25px;"></div>
+                        <div class="blush right" style="width: 35px; height: 20px; top: 70px; right: 25px;"></div>
+                        <div class="mouth open" style="width: 30px; height: 25px; top: 75px;"></div>
+                    </div>
+                </div>
+                <div class="cat-body" style="width: 180px; height: 150px; top: 100px; left: 35px;"></div>
+                <div class="big-heart"></div>
+                <div class="floating-hearts">
+                    <div class="mini-heart" style="top: 20px; left: 20px; animation-delay: 0s;">💕</div>
+                    <div class="mini-heart" style="top: 50px; right: 30px; animation-delay: 0.5s;">💖</div>
+                    <div class="mini-heart" style="bottom: 80px; left: 10px; animation-delay: 1s;">💗</div>
+                    <div class="mini-heart" style="bottom: 100px; right: 10px; animation-delay: 1.5s;">💝</div>
+                </div>
+            </div>
+        </div>
+        <div class="success-message">I knew you'd say yes 💕</div>
+    </div>
+
+    <script>
+        const messages = [
+            "Do you love me? ❤️",
+            "Wait... are you sure? 🥺",
+            "nah that's not right...",
+            "try again 😭",
+            "be serious...",
+            "okay now you're just playing...",
+            "okay last chance..."
+        ];
+        
+        let currentStep = 0;
+        let noButtonAbsolute = false;
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const message = document.getElementById('message');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const cat = document.getElementById('cat');
+        const eyes = document.getElementById('eyes');
+        const eyeLeft = document.getElementById('eyeLeft');
+        const eyeRight = document.getElementById('eyeRight');
+        const mouth = document.getElementById('mouth');
+        const questionMarks = document.getElementById('questionMarks');
+        const pawLeft = document.getElementById('pawLeft');
+        const pawRight = document.getElementById('pawRight');
+        const mainContent = document.getElementById('mainContent');
+        const successPage = document.getElementById('successPage');
+        const heartsBg = document.getElementById('heartsBg');
+        
+        // Create floating background hearts
+        function createBackgroundHearts() {
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '💕';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 4 + 's';
+                heart.style.fontSize = (20 + Math.random() * 20) + 'px';
+                heartsBg.appendChild(heart);
+            }
+        }
+        createBackgroundHearts();
+        
+        function updateCatExpression(step) {
+            // Reset
+            eyeLeft.className = 'eye';
+            eyeRight.className = 'eye';
+            mouth.className = 'mouth';
+            questionMarks.classList.remove('show');
+            pawLeft.classList.add('hidden');
+            pawRight.classList.add('hidden');
+            eyes.style.display = 'flex';
+            
+            if (step === 0) {
+                // Happy normal
+                eyeLeft.classList.add('happy');
+                eyeRight.classList.add('happy');
+                mouth.classList.add('open');
+            } else if (step === 1) {
+                // Worried with question marks
+                questionMarks.classList.add('show');
+                eyeLeft.style.height = '15px';
+                eyeRight.style.height = '15px';
+            } else if (step === 2) {
+                // X eyes (nah that's not right)
+                eyeLeft.style.height = '3px';
+                eyeLeft.style.width = '20px';
+                eyeLeft.style.transform = 'rotate(45deg)';
+                eyeRight.style.height = '3px';
+                eyeRight.style.width = '20px';
+                eyeRight.style.transform = 'rotate(-45deg)';
+                mouth.style.borderRadius = '50%';
+                mouth.style.height = '10px';
+                mouth.style.width = '10px';
+                mouth.style.border = '3px solid #333';
+            } else if (step === 3) {
+                // Crying
+                eyeLeft.classList.add('closed');
+                eyeRight.classList.add('closed');
+                mouth.style.borderRadius = '50% 50% 0 0';
+                mouth.style.borderTop = '3px solid #333';
+                mouth.style.borderBottom = 'none';
+                mouth.style.top = '60px';
+            } else if (step === 4) {
+                // Serious/shy covering eyes
+                eyes.style.display = 'none';
+                pawLeft.classList.remove('hidden');
+                pawRight.classList.remove('hidden');
+                mouth.classList.add('open');
+            } else if (step === 5) {
+                // Annoyed
+                eyeLeft.style.height = '5px';
+                eyeLeft.style.borderRadius = '0';
+                eyeLeft.style.width = '20px';
+                eyeLeft.style.transform = 'rotate(-10deg)';
+                eyeRight.style.height = '5px';
+                eyeRight.style.borderRadius = '0';
+                eyeRight.style.width = '20px';
+                eyeRight.style.transform = 'rotate(10deg)';
+                mouth.style.height = '5px';
+                mouth.style.borderRadius = '0';
+                mouth.style.width = '15px';
+                mouth.style.top = '60px';
+            } else if (step === 6) {
+                // Last chance - worried
+                eyeLeft.style.height = '8px';
+                eyeLeft.style.width = '18px';
+                eyeRight.style.height = '8px';
+                eyeRight.style.width = '18px';
+                mouth.style.borderRadius = '0';
+                mouth.style.height = '3px';
+                mouth.style.width = '20px';
+                mouth.style.top = '65px';
+            }
+        }
+        
+        function makeNoButtonAbsolute() {
+            if (!noButtonAbsolute) {
+                const rect = noBtn.getBoundingClientRect();
+                const containerRect = buttonContainer.getBoundingClientRect();
+                noBtn.style.left = (rect.left - containerRect.left) + 'px';
+                noBtn.style.top = (rect.top - containerRect.top) + 'px';
+                noBtn.classList.add('absolute');
+                noButtonAbsolute = true;
+            }
+        }
+        
+        function moveNoButton() {
+            makeNoButtonAbsolute();
+            const containerRect = buttonContainer.getBoundingClientRect();
+            const maxX = containerRect.width - 100;
+            const maxY = 150;
+            
+            const randomX = Math.random() * maxX - maxX/2;
+            const randomY = Math.random() * maxY - maxY/2;
+            
+            // Combine scale and translate transforms
+            const scales = [0.8, 0.6, 0.4, 0.2, 0];
+            const currentScale = scales[currentStep - 1] || 1;
+            noBtn.style.transform = `translate(${randomX}px, ${randomY}px) scale(${currentScale})`;
+        }
+        
+        function shrinkNoButton() {
+            const scales = [0.8, 0.6, 0.4, 0.2, 0];
+            const currentScale = scales[currentStep - 1] || 0;
+            noBtn.style.opacity = currentScale;
+        }
+        
+        function growYesButton() {
+            const scales = [1, 1.1, 1.2, 1.3, 1.5, 1.8, 2.2];
+            const currentScale = scales[currentStep] || 2.2;
+            yesBtn.style.transform = `scale(${currentScale})`;
+            yesBtn.style.padding = `${15 * currentScale}px ${50 * currentScale}px`;
+        }
+        
+        noBtn.addEventListener('mouseover', () => {
+            if (currentStep < 6) {
+                moveNoButton();
+            }
+        });
+        
+        noBtn.addEventListener('click', () => {
+            if (currentStep < 6) {
+                currentStep++;
+                message.textContent = messages[currentStep];
+                updateCatExpression(currentStep);
+                
+                if (currentStep >= 2) {
+                    shrinkNoButton();
+                    growYesButton();
+                }
+                
+                // Move to random position after click
+                setTimeout(moveNoButton, 100);
+            }
+        });
+        
+        yesBtn.addEventListener('click', () => {
+            mainContent.classList.add('hide');
+            setTimeout(() => {
+                successPage.classList.add('show');
+            }, 300);
+        });
+        
+        // Initialize
+        updateCatExpression(0);
+    </script>
+</body>
+</html>
